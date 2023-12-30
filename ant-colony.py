@@ -2,13 +2,11 @@ import numpy as np
 import time
 from distances import DistanceClass
 
-# Feromonların başlangıç değerlerini belirleme
 def initialize_pheromones(n_points):
     return np.ones((n_points, n_points))
 
-# Feromonların güncellenmesi
 def update_pheromones(pheromone, paths, path_lengths, Q, evaporation_rate, n_points):
-    pheromone *= evaporation_rate  # Feromon buharlaşması
+    pheromone *= evaporation_rate  
     
     for path, path_length in zip(paths, path_lengths):
         for i in range(n_points-1):
@@ -17,7 +15,6 @@ def update_pheromones(pheromone, paths, path_lengths, Q, evaporation_rate, n_poi
     
     return pheromone
 
-# En iyi yolun bulunması
 def find_best_path(distances, pheromone, n_ants, n_iterations, alpha, beta, evaporation_rate, Q):
     n_points = len(distances)
     best_path = None
@@ -27,7 +24,6 @@ def find_best_path(distances, pheromone, n_ants, n_iterations, alpha, beta, evap
         paths = []
         path_lengths = []
         
-        # Karınca döngüsü
         for ant in range(n_ants):
             visited = [False]*n_points
             current_point = np.random.randint(n_points)
@@ -35,12 +31,10 @@ def find_best_path(distances, pheromone, n_ants, n_iterations, alpha, beta, evap
             path = [current_point]
             path_length = 0
             
-            # Tüm şehirler ziyaret edilene kadar döngü
             while False in visited:
                 unvisited = np.where(np.logical_not(visited))[0]
                 probabilities = np.zeros(len(unvisited))
                 
-                # Her bir ziyaret edilmemiş şehir için olasılığın hesaplanması
                 for i, unvisited_point in enumerate(unvisited):
                     probabilities[i] = pheromone[current_point, unvisited_point]**alpha / distances[current_point, unvisited_point]**beta
                 
@@ -76,6 +70,6 @@ start_time = time.time()
 best_path, best_path_length = ant_colony_optimization( DistanceClass.distancesCreate(), n_ants=20, n_iterations=150, alpha=1, beta=2, evaporation_rate=0.1, Q=1)
 
 end_time = time.time()
-print("En iyi yol:", best_path)
-print("En iyi yol uzunluğu:", best_path_length)
-print("Gerçekleşme süresi: ",end_time - start_time)
+print("Best way:", best_path)
+print("Best length:", best_path_length)
+print("Time: ",end_time - start_time)
